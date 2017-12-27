@@ -12,8 +12,6 @@ import java.util.*;
 
 @Component
 public class QueryBuilder {
-    int i = 0;
-    int j = 0;
 
     public static <K, V> void add(LinkedHashMap<K, V> map, int index, K key, V value) {
         assert (map != null);
@@ -159,102 +157,59 @@ public class QueryBuilder {
         Object node = null;
         if (object != null) {
             Object buckets = ((Map) object).get("buckets");
-            node = getNode(buckets, requestList);
-           /* top.put("name", "totalApplication");
+            node = getNode(buckets, requestList, "totalApplication",-1);
+            top.put("name", "totalApplication");
             top.put("doc_count", hits.get("total"));
-            top.put("parent", node);*/
+            top.put("parent", node);
         }
         if (node != null) {
-            System.out.println(gson.toJson(node));
+            System.out.println(gson.toJson(top));
         }
-        return node;
+        return top;
     }
 
-    public Object getNode(Object object, List<ChaidAnalysisRequest> requestList) {
+    public Object getNode(Object object, List<ChaidAnalysisRequest> requestList, String parent, int i) {
         List<Map<String, Object>> listObject = new ArrayList<>();
         Map<String, Object> resultMap;
         if (object instanceof List) {
             List<Object> innerList = (List) object;
+            i++;
             for (Object innerObject : innerList) {
                 resultMap = new HashMap<>();
-                if (innerObject instanceof Map) {
-                    Map tempMap = (Map) innerObject;
-                    if (i == requestList.size()) {
-                        tempMap.put("name", requestList.get(j).getFieldName());
-                        int tempCount = j;
-                        tempCount--;
-                        tempMap.put("parent", requestList.get(tempCount).getFieldName());
-
-                    } else {
-                        tempMap.put("name", requestList.get(i).getFieldName());
-                    }
-
-                    if (i == 0) {
-                        tempMap.put("parent", null);
-                    } else if (i < requestList.size()) {
-                        int tempCount = i;
-                        tempCount--;
-                        tempMap.put("parent", requestList.get(tempCount).getFieldName());
-                    }
-                    innerObject = tempMap;
-                    if (i < requestList.size()) {
-                        i++;
-                    }
-
-                }
                 Object temp = ((Map) innerObject).get("placeHolder");
                 if (temp != null) {
+                    String subParent = requestList.get(i).getFieldName();
                     Object bucket = ((Map) temp).get("buckets");
-                    Object node = getNode(bucket, requestList);
+                    Object node = getNode(bucket, requestList, subParent,i);
                     if (node != null) {
                         resultMap.putAll(((Map) innerObject));
+                        resultMap.put("name", subParent);
+                        resultMap.put("parent", parent);
                         resultMap.put("placeHolder", node);
                         listObject.add(resultMap);
                     }
                 } else {
                     resultMap.putAll((Map) innerObject);
+                    resultMap.put("name", requestList.get(i).getFieldName());
+                    resultMap.put("parent", parent);
                     listObject.add(resultMap);
-                    if (i == requestList.size()) {
-                        j = i;
-                    }
-                    j--;
                 }
             }
         } else if (object instanceof Map) {
             Map<String, Object> map = (Map) object;
             Set<String> keySet = map.keySet();
+            i++;
             for (String key : keySet) {
                 resultMap = new HashMap<>();
                 Map<String, Object> innerLoopMap = (Map) map.get(key);
-                //
-                if (i == requestList.size()) {
-                    innerLoopMap.put("name", requestList.get(j).getFieldName());
-                    int tempCount = j;
-                    tempCount--;
-                    innerLoopMap.put("parent", requestList.get(tempCount).getFieldName());
-
-                } else {
-                    innerLoopMap.put("name", requestList.get(i).getFieldName());
-                }
-
-                if (i == 0) {
-                    innerLoopMap.put("parent", null);
-                } else if (i < requestList.size()) {
-                    int tempCount = i;
-                    tempCount--;
-                    innerLoopMap.put("parent", requestList.get(tempCount).getFieldName());
-                }
-                if (i < requestList.size()) {
-                    i++;
-                }
-
-
-                //
                 Object temp = innerLoopMap.get("placeHolder");
                 if (temp != null) {
+                    String subParent = requestList.get(i).getFieldName();
                     Object bucket = ((Map) temp).get("buckets");
-                    Object node = getNode(bucket, requestList);
+                    Object node = getNode(bucket, requestList, subParent,i);
                     resultMap.put("placeHolder", node);
+                    resultMap.put("name",subParent);
+                    resultMap.put("parent",parent);
                     Object o = map.get(key);
                     if (o instanceof Map) {
                         Map o1 = (Map) o;
@@ -265,29 +220,12 @@ public class QueryBuilder {
                     listObject.add(resultMap);
                 } else {
                     resultMap.putAll(innerLoopMap);
+                    resultMap.put("name",requestList.get(i).getFieldName());
+                    resultMap.put("parent",parent);
                     listObject.add(resultMap);
-                    if (i == requestList.size()) {
-                        j = i;
-                    }
-                    j--;
                 }
             }
         }
         return listObject.isEmpty() ? null : listObject;
-    }
-
-    public Object placeElementsAtSpecifiedLocation(List<ChaidAnalysisRequest> query, Object json) {
-        Gson gson = new GsonBuilder().create();
-        ArrayList arrayList = (ArrayList) json;
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        for (Object arrayList1 : arrayList) {
-            System.out.println(arrayList1);
-            map.put("placeHolder", arrayList1);
-        }
-
-        for (ChaidAnalysisRequest requests : query) {
-            add(map, requests.getLevel(), "name", requests.getFieldName());
-        }
-        return map;
     }
 }
