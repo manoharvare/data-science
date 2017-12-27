@@ -218,6 +218,8 @@ public class QueryBuilder {
                         j = i;
                     }
                     j--;
+
+
                 }
             }
         } else if (object instanceof Map) {
@@ -248,8 +250,6 @@ public class QueryBuilder {
                     i++;
                 }
 
-
-                //
                 Object temp = innerLoopMap.get("placeHolder");
                 if (temp != null) {
                     Object bucket = ((Map) temp).get("buckets");
@@ -276,18 +276,4 @@ public class QueryBuilder {
         return listObject.isEmpty() ? null : listObject;
     }
 
-    public Object placeElementsAtSpecifiedLocation(List<ChaidAnalysisRequest> query, Object json) {
-        Gson gson = new GsonBuilder().create();
-        ArrayList arrayList = (ArrayList) json;
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        for (Object arrayList1 : arrayList) {
-            System.out.println(arrayList1);
-            map.put("placeHolder", arrayList1);
-        }
-
-        for (ChaidAnalysisRequest requests : query) {
-            add(map, requests.getLevel(), "name", requests.getFieldName());
-        }
-        return map;
-    }
 }
