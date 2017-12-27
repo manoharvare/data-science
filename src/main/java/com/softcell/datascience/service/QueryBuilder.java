@@ -160,7 +160,7 @@ public class QueryBuilder {
             node = getNode(buckets, requestList, "totalApplication",-1);
             top.put("name", "totalApplication");
             top.put("doc_count", hits.get("total"));
-            top.put("parent", node);
+            top.put("placeHolder", node);
         }
         if (node != null) {
             System.out.println(gson.toJson(top));
