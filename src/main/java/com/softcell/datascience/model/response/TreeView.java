@@ -1,26 +1,25 @@
 package com.softcell.datascience.model.response;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TreeView {
     @JsonProperty("name")
     private String name;
     @JsonProperty("parent")
     private String parent;
-    @JsonProperty("count")
-    private String count;
-    private String bucketName;
+    @JsonProperty("doc_count")
+    private Long count;
+    @JsonProperty("key")
+    private String key;
     @JsonProperty("children")
-    private List<TreeView> children;
+    private List<TreeView> placeHolder;
 }

@@ -12,6 +12,6 @@ import lombok.*;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Aggregation {
-    @JsonProperty("placeHolder")
+    @JsonProperty("children")
     private PlaceHolder placeHolder;
 }

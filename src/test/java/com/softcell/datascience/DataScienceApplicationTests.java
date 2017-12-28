@@ -1,10 +1,12 @@
 package com.softcell.datascience;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softcell.datascience.model.query.*;
 import com.softcell.datascience.model.request.client.Bucket;
 import com.softcell.datascience.model.request.client.ChaidAnalysisRequest;
+import com.softcell.datascience.model.response.TreeView;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,7 +78,7 @@ public class DataScienceApplicationTests {
             } else if (index == 10) {
                 query.getAggregation().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().setAggregations(getAggregationObject());
                 query.getAggregation().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().setPlaceHolder(getPlaceHolder(chaidAnalysisRequest));
-            }else if (index == 11) {
+            } else if (index == 11) {
                 query.getAggregation().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().setAggregations(getAggregationObject());
                 query.getAggregation().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().getPlaceHolder().getAggregations().setPlaceHolder(getPlaceHolder(chaidAnalysisRequest));
             }
@@ -127,6 +129,15 @@ public class DataScienceApplicationTests {
         String json = "{\"size\":0,\"aggs\":{\"placeHolder\":{\"range\":{\"field\":\"age\",\"keyed\":true,\"ranges\":[{\"key\":\"20-40\",\"from\":20,\"to\":40},{\"key\":\"40-60\",\"from\":40,\"to\":60},{\"key\":\"60-80\",\"from\":60,\"to\":80}]},\"aggs\":{\"placeHolder\":{\"range\":{\"field\":\"cibilScore\",\"keyed\":true,\"ranges\":[{\"key\":\"500-600\",\"from\":500,\"to\":600},{\"key\":\"600-700\",\"from\":600,\"to\":700},{\"key\":\"700-800\",\"from\":700,\"to\":800}]},\"aggs\":{\"placeHolder\":{\"terms\":{\"field\":\"city.keyword\",\"size\":1000},\"aggs\":{\"placeHolder\":{\"terms\":{\"field\":\"gender.keyword\",\"size\":1000}}}}}}}}}}";
         Query query = objectMapper.readValue(json, Query.class);
         System.out.println(query);
+    }
+
+    @Test
+    public void mapping() throws IOException {
+        String json = "{\"name\":null,\"parent\":null,\"doc_count\":null,\"key\":null,\"placeHolder\":null}";
+        ObjectMapper mapper = new ObjectMapper();
+        TreeView treeView = mapper.readValue(json,TreeView.class);
+        String dtoAsString = mapper.writeValueAsString(treeView);
+        System.out.println(dtoAsString);
     }
 
 }
