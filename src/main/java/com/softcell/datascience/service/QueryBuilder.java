@@ -127,7 +127,7 @@ public class QueryBuilder {
             placeHolder = PlaceHolder.builder()
                     .term(Term.builder()
                             .field(StringUtils.join(chaidAnalysisRequest.getFieldName(), ".keyword"))
-                            .size(null != chaidAnalysisRequest.getSize() && chaidAnalysisRequest.getSize() > 0 ? chaidAnalysisRequest.getSize() : 1000)
+                            .size(null != chaidAnalysisRequest.getSize() && chaidAnalysisRequest.getSize() > 0 ? chaidAnalysisRequest.getSize() : 10)
                             .build())
                     .build();
         }
@@ -152,18 +152,15 @@ public class QueryBuilder {
         LinkedHashMap innerMap = gson.fromJson(json, LinkedHashMap.class);
         Map hits = (Map) innerMap.get("hits");
         Map o = (Map) innerMap.get("aggregations");
-        Object object = o.get("placeHolder");
+        Object object = o.get("children");
         System.out.println(gson.toJson(object));
         Object node = null;
         if (object != null) {
             Object buckets = ((Map) object).get("buckets");
-            node = getNode(buckets, requestList, "totalApplication",-1);
-            top.put("name", "totalApplication");
+            node = getNode(buckets, requestList, "Applications", -1);
+            top.put("name", "Applications");
             top.put("doc_count", hits.get("total"));
-            top.put("parent", node);
-        }
-        if (node != null) {
-            System.out.println(gson.toJson(top));
+            top.put("children", node);
         }
         return top;
     }
@@ -176,16 +173,16 @@ public class QueryBuilder {
             i++;
             for (Object innerObject : innerList) {
                 resultMap = new HashMap<>();
-                Object temp = ((Map) innerObject).get("placeHolder");
+                Object temp = ((Map) innerObject).get("children");
                 if (temp != null) {
                     String subParent = requestList.get(i).getFieldName();
                     Object bucket = ((Map) temp).get("buckets");
-                    Object node = getNode(bucket, requestList, subParent,i);
+                    Object node = getNode(bucket, requestList, subParent, i);
                     if (node != null) {
                         resultMap.putAll(((Map) innerObject));
                         resultMap.put("name", subParent);
                         resultMap.put("parent", parent);
-                        resultMap.put("placeHolder", node);
+                        resultMap.put("children", node);
                         listObject.add(resultMap);
                     }
                 } else {
@@ -202,30 +199,37 @@ public class QueryBuilder {
             for (String key : keySet) {
                 resultMap = new HashMap<>();
                 Map<String, Object> innerLoopMap = (Map) map.get(key);
-                Object temp = innerLoopMap.get("placeHolder");
+                Object temp = innerLoopMap.get("children");
                 if (temp != null) {
                     String subParent = requestList.get(i).getFieldName();
                     Object bucket = ((Map) temp).get("buckets");
-                    Object node = getNode(bucket, requestList, subParent,i);
-                    resultMap.put("placeHolder", node);
-                    resultMap.put("name",subParent);
-                    resultMap.put("parent",parent);
+                    Object node = getNode(bucket, requestList, subParent, i);
+                    resultMap.put("children", node);
+                    resultMap.put("name", subParent);
+                    resultMap.put("parent", parent);
                     Object o = map.get(key);
-                    if (o instanceof Map) {
-                        Map o1 = (Map) o;
-                        o1.put("key", key);
-                        o1.remove("placeHolder");
-                        resultMap.putAll((Map) o1);
-                    }
+                    removeObject(o, key, resultMap);
                     listObject.add(resultMap);
                 } else {
                     resultMap.putAll(innerLoopMap);
-                    resultMap.put("name",requestList.get(i).getFieldName());
-                    resultMap.put("parent",parent);
+                    resultMap.put("name", requestList.get(i).getFieldName());
+                    resultMap.put("parent", parent);
+                    Object o = map.get(key);
+                    removeObject(o, key, resultMap);
                     listObject.add(resultMap);
                 }
             }
         }
         return listObject.isEmpty() ? null : listObject;
+    }
+
+    private Map<String, Object> removeObject(Object o,String key, Map<String, Object>  resultMap){
+        if (o instanceof Map) {
+            Map map = (Map) o;
+            map.put("key", key);
+            map.remove("children");
+            resultMap.putAll((Map) map);
+        }
+        return resultMap;
     }
 }
