@@ -157,8 +157,8 @@ public class QueryBuilder {
         Object node = null;
         if (object != null) {
             Object buckets = ((Map) object).get("buckets");
-            node = getNode(buckets, requestList, "Total_Application", -1);
-            top.put("name", "Total_Application");
+            node = getNode(buckets, requestList, "Applications", -1);
+            top.put("name", "Applications");
             top.put("doc_count", hits.get("total"));
             top.put("children", node);
         }
@@ -208,21 +208,28 @@ public class QueryBuilder {
                     resultMap.put("name", subParent);
                     resultMap.put("parent", parent);
                     Object o = map.get(key);
-                    if (o instanceof Map) {
-                        Map o1 = (Map) o;
-                        o1.put("key", key);
-                        o1.remove("placeHolder");
-                        resultMap.putAll((Map) o1);
-                    }
+                    removeObject(o, key, resultMap);
                     listObject.add(resultMap);
                 } else {
                     resultMap.putAll(innerLoopMap);
                     resultMap.put("name", requestList.get(i).getFieldName());
                     resultMap.put("parent", parent);
+                    Object o = map.get(key);
+                    removeObject(o, key, resultMap);
                     listObject.add(resultMap);
                 }
             }
         }
         return listObject.isEmpty() ? null : listObject;
+    }
+
+    private Map<String, Object> removeObject(Object o,String key, Map<String, Object>  resultMap){
+        if (o instanceof Map) {
+            Map map = (Map) o;
+            map.put("key", key);
+            map.remove("children");
+            resultMap.putAll((Map) map);
+        }
+        return resultMap;
     }
 }
