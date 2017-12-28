@@ -1,16 +1,13 @@
 package com.softcell.datascience.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.softcell.datascience.model.query.*;
 import com.softcell.datascience.model.request.client.Bucket;
 import com.softcell.datascience.model.request.client.ChaidAnalysisRequest;
-import com.softcell.datascience.model.response.TreeView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 
 @Component
@@ -130,7 +127,7 @@ public class QueryBuilder {
             placeHolder = PlaceHolder.builder()
                     .term(Term.builder()
                             .field(StringUtils.join(chaidAnalysisRequest.getFieldName(), ".keyword"))
-                            .size(null != chaidAnalysisRequest.getSize() && chaidAnalysisRequest.getSize() > 0 ? chaidAnalysisRequest.getSize() : 1000)
+                            .size(null != chaidAnalysisRequest.getSize() && chaidAnalysisRequest.getSize() > 0 ? chaidAnalysisRequest.getSize() : 10)
                             .build())
                     .build();
         }

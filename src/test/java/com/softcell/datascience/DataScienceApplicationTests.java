@@ -1,12 +1,10 @@
 package com.softcell.datascience;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softcell.datascience.model.query.*;
 import com.softcell.datascience.model.request.client.Bucket;
 import com.softcell.datascience.model.request.client.ChaidAnalysisRequest;
-import com.softcell.datascience.model.response.TreeView;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,14 +128,6 @@ public class DataScienceApplicationTests {
         Query query = objectMapper.readValue(json, Query.class);
         System.out.println(query);
     }
-
-    @Test
-    public void mapping() throws IOException {
-        String json = "{\"name\":null,\"parent\":null,\"doc_count\":null,\"key\":null,\"placeHolder\":null}";
-        ObjectMapper mapper = new ObjectMapper();
-        TreeView treeView = mapper.readValue(json,TreeView.class);
-        String dtoAsString = mapper.writeValueAsString(treeView);
-        System.out.println(dtoAsString);
-    }
+    
 
 }
