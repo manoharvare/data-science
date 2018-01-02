@@ -33,10 +33,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator-docs</artifactId>
         </dependency>
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>-->
+      
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -51,12 +48,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-       <!-- <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
-            <version>4.1.0</version>
-        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -88,7 +79,6 @@
             <version>1.1.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -103,9 +93,185 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.profile.id>dev</build.profile.id>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/dev</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven-resources-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>default-resources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/classes</outputDirectory>
+                                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                                    <delimiters>
+                                        <delimiter>#</delimiter>
+                                    </delimiters>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/resources/dev</directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>**/*.xml</include>
+                                                <include>**/*.properties</include>
+                                                <include>**/*.yaml</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>src/main/resources/dev</directory>
+                                            <filtering>false</filtering>
+                                            <excludes>
+                                                <exclude>**/*.xml</exclude>
+                                                <exclude>**/*.properties</exclude>
+                                                <exclude>**/*.yaml</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>uat</id>
+            <properties>
+                <build.profile.id>uat</build.profile.id>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/uat</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven-resources-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>default-resources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/classes</outputDirectory>
+                                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                                    <delimiters>
+                                        <delimiter>#</delimiter>
+                                    </delimiters>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/resources/uat</directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>**/*.xml</include>
+                                                <include>**/*.properties</include>
+                                                <include>**/*.yaml</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>src/main/resources/uat</directory>
+                                            <filtering>false</filtering>
+                                            <excludes>
+                                                <exclude>**/*.xml</exclude>
+                                                <exclude>**/*.properties</exclude>
+                                                <exclude>**/*.yaml</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <build.profile.id>prod</build.profile.id>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/prod</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven-resources-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>default-resources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/classes</outputDirectory>
+                                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                                    <delimiters>
+                                        <delimiter>#</delimiter>
+                                    </delimiters>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/resources/prod</directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>**/*.xml</include>
+                                                <include>**/*.properties</include>
+                                                <include>**/*.yaml</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>src/main/resources/prod</directory>
+                                            <filtering>false</filtering>
+                                            <excludes>
+                                                <exclude>**/*.xml</exclude>
+                                                <exclude>**/*.properties</exclude>
+                                                <exclude>**/*.yaml</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
