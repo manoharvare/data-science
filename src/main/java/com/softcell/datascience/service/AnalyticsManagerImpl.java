@@ -1,6 +1,9 @@
 package com.softcell.datascience.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.softcell.datascience.model.query.ElasticQuery;
 import com.softcell.datascience.model.request.client.Aggregation;
+import com.softcell.datascience.model.request.client.ClientRequest;
 import com.softcell.datascience.util.DataScienceUtil;
 import com.softcell.datascience.util.HttpTransportationService;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,18 @@ public class AnalyticsManagerImpl implements AnalyticsManager {
         Object finalResponse = new Object();
         if(StringUtils.isNotBlank(chaidGraphJson)){
             finalResponse = builder.getParseObject(chaidGraphJson, sortedRequestObject);
+        }
+        return finalResponse;
+    }
+
+    @Override
+    public Object doDynamicChaidAnalysisWithFilter(ClientRequest clientRequest) throws IOException {
+        List<Aggregation> sortedRequestObject = builder.doSorting(clientRequest.getAggregations());
+        ElasticQuery elasticQuery = builder.buildChaidQuery(clientRequest.getFilter(),sortedRequestObject);
+        String response = httpTransportationService.postRequest(util.getUrl(), util.buildJsonString(elasticQuery), MediaType.APPLICATION_JSON_UTF8_VALUE.toString());
+        Object finalResponse = new Object();
+        if(StringUtils.isNotBlank(response)){
+            finalResponse = builder.getParseObject(response, sortedRequestObject);
         }
         return finalResponse;
     }

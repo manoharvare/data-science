@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.softcell.datascience.model.query.*;
 import com.softcell.datascience.model.request.client.Bucket;
 import com.softcell.datascience.model.request.client.Aggregation;
+import com.softcell.datascience.model.request.client.Filter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -13,24 +14,25 @@ import java.util.*;
 @Component
 public class QueryBuilder {
 
-    public static <K, V> void add(LinkedHashMap<K, V> map, int index, K key, V value) {
-        assert (map != null);
-        assert !map.containsKey(key);
-        assert (index >= 0) && (index < map.size());
+    public ElasticQuery buildChaidQuery(List<Filter> filter, List<Aggregation> sortedRequestObject) {
+        ElasticQuery elasticQuery = buildChaidQuery(sortedRequestObject);
+        elasticQuery.setQuery(getQuery(filter));
+        return elasticQuery;
+    }
 
-        int i = 0;
-        List<Map.Entry<K, V>> rest = new ArrayList<>();
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (i++ >= index) {
-                rest.add(entry);
-            }
+    private Query getQuery(List<Filter> filters) {
+        Query query = new Query();
+        query.setBool(new Bool());
+        List<Condition> conditions = new ArrayList<>();
+        query.getBool().setMust(conditions);
+        for (Filter filter: filters){
+            Condition condition = new Condition();
+            Term term = new Term();
+            term.setAdditionalProperty(filter.getFieldName()+".keyword",filter.getValue());
+            condition.setTerm(term);
+            conditions.add(condition);
         }
-        map.put(key, value);
-        for (int j = 0; j < rest.size(); j++) {
-            Map.Entry<K, V> entry = rest.get(j);
-            map.remove(entry.getKey());
-            map.put(entry.getKey(), entry.getValue());
-        }
+        return query;
     }
 
     public ElasticQuery buildChaidQuery(List<Aggregation> requestList) {
@@ -232,4 +234,6 @@ public class QueryBuilder {
         }
         return resultMap;
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.softcell.datascience.rest;
 
 import com.softcell.datascience.model.request.client.Aggregation;
+import com.softcell.datascience.model.request.client.ClientRequest;
 import com.softcell.datascience.service.AnalyticsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,6 @@ import static com.softcell.datascience.rest.constants.EndPointRefferer.*;
         produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class AnalyticsController {
-
     @Autowired
     private AnalyticsManager analyticsManager;
 
@@ -37,6 +37,12 @@ public class AnalyticsController {
     public ResponseEntity<?> doAnalysis(
             @RequestBody final List<Aggregation> query) throws IOException {
         return new ResponseEntity<>(analyticsManager.doDynamicChaidAnalysis(query), HttpStatus.OK);
+    }
+
+    @PostMapping(value = DYNAMIC_CHAID_WITH_FILTER)
+    public ResponseEntity<?> doAnalysisWithFilter(
+            @RequestBody final ClientRequest clientRequest) throws IOException {
+        return new ResponseEntity<>(analyticsManager.doDynamicChaidAnalysisWithFilter(clientRequest), HttpStatus.OK);
     }
 
 }
