@@ -10,6 +10,6 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Query {
-    private Bool bool;
+public class Condition {
+    private Term term;
 }

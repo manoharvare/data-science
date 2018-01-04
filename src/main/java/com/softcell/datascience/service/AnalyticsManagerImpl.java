@@ -1,6 +1,6 @@
 package com.softcell.datascience.service;
 
-import com.softcell.datascience.model.request.client.ChaidAnalysisRequest;
+import com.softcell.datascience.model.request.client.Aggregation;
 import com.softcell.datascience.util.DataScienceUtil;
 import com.softcell.datascience.util.HttpTransportationService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +29,8 @@ public class AnalyticsManagerImpl implements AnalyticsManager {
     }
 
     @Override
-    public Object doDynamicChaidAnalysis(List<ChaidAnalysisRequest> query) throws IOException {
-        List<ChaidAnalysisRequest> sortedRequestObject = builder.doSorting(query);
+    public Object doDynamicChaidAnalysis(List<Aggregation> query) throws IOException {
+        List<Aggregation> sortedRequestObject = builder.doSorting(query);
         String chaidGraphJson = httpTransportationService.postRequest(util.getUrl(), util.buildJsonString(builder.buildChaidQuery(sortedRequestObject)), MediaType.APPLICATION_JSON_UTF8_VALUE.toString());
         Object finalResponse = new Object();
         if(StringUtils.isNotBlank(chaidGraphJson)){

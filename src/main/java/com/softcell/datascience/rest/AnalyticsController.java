@@ -1,6 +1,6 @@
 package com.softcell.datascience.rest;
 
-import com.softcell.datascience.model.request.client.ChaidAnalysisRequest;
+import com.softcell.datascience.model.request.client.Aggregation;
 import com.softcell.datascience.service.AnalyticsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class AnalyticsController {
 
     @PostMapping(value = DYNAMIC_CHAID)
     public ResponseEntity<?> doAnalysis(
-            @RequestBody final List<ChaidAnalysisRequest> query) throws IOException {
+            @RequestBody final List<Aggregation> query) throws IOException {
         return new ResponseEntity<>(analyticsManager.doDynamicChaidAnalysis(query), HttpStatus.OK);
     }
 
